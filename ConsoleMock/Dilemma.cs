@@ -37,6 +37,12 @@ namespace ConsoleMock
             return numerator / denominator;
         }
 
+        public float GetStrictPreference(string choice1, string choice2, Criterion criterion)
+            => 1 - GetPreference(choice2, choice1, criterion);
+
+        public float GetIndifference(string choice1, string choice2, Criterion criterion)
+            => Min(GetPreference(choice1, choice2, criterion), GetPreference(choice2, choice1, criterion));
+
         public float GetDiscredit(Choice choice1, Choice choice2)
         {
             throw new NotImplementedException();

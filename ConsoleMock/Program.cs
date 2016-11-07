@@ -45,6 +45,18 @@ namespace ConsoleMock
                 }
                 Console.WriteLine();
             }
+            Console.WriteLine();
+
+            for (int i = 0; i < choices.Length; i++)
+            {
+                for (int j = 0; j < choices.Length; j++)
+                {
+                    var strictPreference = carDecision.GetStrictPreference(choices[i], choices[j], speed);
+                    Console.Write($"{strictPreference:F3}\t");
+                }
+                Console.WriteLine();
+            }
+
             Console.ReadLine();
         }
     }
