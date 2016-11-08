@@ -15,8 +15,9 @@ namespace ConsoleMock
                     "Talbot HOR.GLS", "Audi 80 CL", "Renault R18 GTL", "Alfa SUD TI-NR" };
             var carDecision = new Dilemma(criteria, choices);
 
-            carDecision.preferenceThreshold = gs => 0.1f * gs;
+            carDecision.preferenceThreshold = gs => gs / 10;
             carDecision.indifferenceThreshold = gs => 5;
+            carDecision.vetoThreshold = gs => 10 + gs / 10;
 
             var speedByChoice = new Dictionary<string, float>()
             {
@@ -40,8 +41,8 @@ namespace ConsoleMock
             {
                 for (int j = 0; j < choices.Length; j++)
                 {
-                    var preference = carDecision.GetPreference(choices[i], choices[j], speed);
-                    Console.Write($"{preference:F3}\t");
+                    var discredit = carDecision.GetDiscredit(choices[i], choices[j], speed);
+                    Console.Write($"{discredit:F3}\t");
                 }
                 Console.WriteLine();
             }

@@ -12,7 +12,7 @@ namespace ConsoleMock
 
         private Func<string, Criterion, float> evaluation;
         // Hack.
-        public Func<float, float> preferenceThreshold, indifferenceThreshold;
+        public Func<float, float> preferenceThreshold, indifferenceThreshold, vetoThreshold;
 
         public Dilemma(IEnumerable<Criterion> criteria, IEnumerable<string> choices)
         {
@@ -43,9 +43,19 @@ namespace ConsoleMock
         public float GetIndifference(string choice1, string choice2, Criterion criterion)
             => Min(GetPreference(choice1, choice2, criterion), GetPreference(choice2, choice1, criterion));
 
-        public float GetDiscredit(Choice choice1, Choice choice2)
+        public float GetDiscredit(string choice1, string choice2, Criterion criterion)
         {
-            throw new NotImplementedException();
+            var evaluationOfChoice1 = evaluation(choice1, criterion);
+            var evaluationOfChoice2 = evaluation(choice2, criterion);
+
+            var numerator = evaluationOfChoice2 - evaluationOfChoice1 - preferenceThreshold(evaluationOfChoice1);
+            var denominator = vetoThreshold(evaluationOfChoice1) - preferenceThreshold(evaluationOfChoice1);
+            var output = numerator / denominator;
+            if (output < 0)
+                return 0;
+            if (output > 1)
+                return 1;
+            return output;
         }
     }
 }
