@@ -13,6 +13,12 @@ namespace ConsoleMock
         private static Func<float, float> CreateMembershipFunction(float supportStart, float kernelStart,
                                                                     float kernelEnd, float supportEnd)
         {
+            bool argsAreInvalid = supportStart > kernelStart
+                                || kernelStart > kernelEnd
+                                || kernelEnd > supportEnd;
+            if (argsAreInvalid)
+                throw new ArgumentException();
+
             return x =>
             {
                 if (x < supportStart || x > supportEnd)

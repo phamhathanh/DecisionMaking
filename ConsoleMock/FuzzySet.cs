@@ -11,9 +11,7 @@ namespace ConsoleMock
             this.membershipFunction = membershipFunction;
         }
 
-        public float GradeOfMembershipOf(T item)
-        {
-            return membershipFunction(item);
-        }
+        public float GetMembershipOf(T item)
+            => membershipFunction(item);
     }
 }
