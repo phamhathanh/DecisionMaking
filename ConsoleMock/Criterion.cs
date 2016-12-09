@@ -1,4 +1,4 @@
-﻿namespace ConsoleMock
+﻿namespace DecisionMaking
 {
     public class Criterion
     {

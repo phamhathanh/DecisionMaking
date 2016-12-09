@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
 
-namespace ConsoleMock
+namespace DecisionMaking
 {
     public class Dilemma
     {

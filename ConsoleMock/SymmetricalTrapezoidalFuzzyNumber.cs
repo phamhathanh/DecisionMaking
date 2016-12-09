@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ConsoleMock
+namespace DecisionMaking
 {
     public class SymmetricalTrapezoidalFuzzyNumber : TrapezoidalFuzzyNumber
     {

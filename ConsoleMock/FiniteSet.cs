@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleMock
+namespace DecisionMaking
 {
     public class FiniteSet<T> : IEnumerable<T>
     {

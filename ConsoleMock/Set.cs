@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleMock
+namespace DecisionMaking
 {
     public class Set<T>
     {
