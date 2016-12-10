@@ -7,56 +7,36 @@ namespace DecisionMaking
 {
     public class Program
     {
+        private const string POOR = "Poor", FAIR = "Fair", GOOD = "Good", FAIR_TO_GOOD = "Fair to good", VERY_GOOD = "Very good", NOT_CLEAR = "Not clear",
+                            SAPA = "Sapa", TAM_DAO = "Tam Dao", BA_VI = "Ba Vi";
+
         public static void Main(string[] args)
         {
-            var speed = new Criterion(1);
-            var criteria = new[] { speed };
-            var choices = new[] { "VW Golf C", "Renault R9 GTL", "Citroen GSA X1", "Peugeot P305 GR",
-                    "Talbot HOR.GLS", "Audi 80 CL", "Renault R18 GTL", "Alfa SUD TI-NR" };
-            var carDecision = new Dilemma(criteria, choices);
-
-            carDecision.preferenceThreshold = gs => gs / 10;
-            carDecision.indifferenceThreshold = gs => 5;
-            carDecision.vetoThreshold = gs => 10 + gs / 10;
-
-            var speedByChoice = new Dictionary<string, float>()
+            var values = new Dictionary<string, TrapezoidalFuzzyNumber>
             {
-                ["VW Golf C"] = 140,
-                ["Renault R9 GTL"] = 150,
-                ["Citroen GSA X1"] = 160,
-                ["Peugeot P305 GR"] = 153,
-                ["Talbot HOR.GLS"] = 164,
-                ["Audi 80 CL"] = 148,
-                ["Renault R18 GTL"] = 155,
-                ["Alfa SUD TI-NR"] = 170
+                [POOR] = new TrapezoidalFuzzyNumber(0, 0.2, 0.2, 0.4),
+                [FAIR] = new TrapezoidalFuzzyNumber(0.4, 0.6, 0.6, 0.8),
+                [GOOD] = new TrapezoidalFuzzyNumber(0.6, 0.8, 0.8, 1),
+                [FAIR_TO_GOOD] = new TrapezoidalFuzzyNumber(0.4, 0.6, 0.6, 1),
+                [VERY_GOOD] = new TrapezoidalFuzzyNumber(0.8, 1, 1, 1),
+                [NOT_CLEAR] = new TrapezoidalFuzzyNumber(0, 0, 1, 1)
             };
-            carDecision.AddEvaluation((choice, criterion) => speedByChoice[choice]);
+            var quality = new Criterion(values, 1);
+            var price = new Criterion(values, 0.625);
+            var funness = new Criterion(values, 0.625);
+            var distance = new Criterion(values, 0.25);
+            var criteria = new[] { quality, price, funness, distance };
 
-            var allPairs = from car1 in choices
-                           from car2 in choices
-                           where car1.CompareTo(car2) == -1
-                           select new Tuple<string, string>(car1, car2);
+            var alternatives = new[] { SAPA, TAM_DAO, BA_VI };
 
-            for (int i = 0; i < choices.Length; i++)
+            var evaluation = new Dictionary<string, Dictionary<Criterion, string>>
             {
-                for (int j = 0; j < choices.Length; j++)
-                {
-                    var discredit = carDecision.GetDiscredit(choices[i], choices[j], speed);
-                    Console.Write($"{discredit:F3}\t");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine();
+                [SAPA] = new Dictionary<Criterion, string> { [quality] = GOOD, [price] = POOR, [funness] = POOR, [distance] = GOOD },
+                [TAM_DAO] = new Dictionary<Criterion, string> { [quality] = VERY_GOOD, [price] = POOR, [funness] = FAIR_TO_GOOD, [distance] = NOT_CLEAR },
+                [BA_VI] = new Dictionary<Criterion, string> { [quality] = FAIR, [price] = POOR, [funness] = FAIR, [distance] = FAIR }
+            };
 
-            for (int i = 0; i < choices.Length; i++)
-            {
-                for (int j = 0; j < choices.Length; j++)
-                {
-                    var strictPreference = carDecision.GetStrictPreference(choices[i], choices[j], speed);
-                    Console.Write($"{strictPreference:F3}\t");
-                }
-                Console.WriteLine();
-            }
+            var dilemma = new Dilemma(criteria, alternatives, evaluation);
 
             Console.ReadLine();
         }

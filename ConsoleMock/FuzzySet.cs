@@ -4,14 +4,14 @@ namespace DecisionMaking
 {
     public class FuzzySet<T>
     {
-        private readonly Func<T, float> membershipFunction;
+        private readonly Func<T, double> membershipFunction;
 
-        public FuzzySet(Func<T, float> membershipFunction)
+        public FuzzySet(Func<T, double> membershipFunction)
         {
             this.membershipFunction = membershipFunction;
         }
 
-        public float GetMembershipOf(T item)
+        public double GetMembershipOf(T item)
             => membershipFunction(item);
     }
 }

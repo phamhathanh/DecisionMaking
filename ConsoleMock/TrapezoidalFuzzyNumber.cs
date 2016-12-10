@@ -3,15 +3,15 @@ using System.Diagnostics;
 
 namespace DecisionMaking
 {
-    public class TrapezoidalFuzzyNumber : FuzzySet<float>
+    public class TrapezoidalFuzzyNumber : FuzzySet<double>
     {
-        public TrapezoidalFuzzyNumber(float supportStart, float kernelStart, float kernelEnd, float supportEnd)
+        public TrapezoidalFuzzyNumber(double supportStart, double kernelStart, double kernelEnd, double supportEnd)
             : base(CreateMembershipFunction(supportStart, kernelStart, kernelEnd, supportEnd))
         {
         }
 
-        private static Func<float, float> CreateMembershipFunction(float supportStart, float kernelStart,
-                                                                    float kernelEnd, float supportEnd)
+        private static Func<double, double> CreateMembershipFunction(double supportStart, double kernelStart,
+                                                                    double kernelEnd, double supportEnd)
         {
             bool argsAreInvalid = supportStart > kernelStart
                                 || kernelStart > kernelEnd
