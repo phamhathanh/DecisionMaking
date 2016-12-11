@@ -41,7 +41,13 @@ namespace DecisionMaking
         public double GetCredibilityOfPreferenceOver(TrapezoidalFuzzyNumber other)
         {
             var n1 = this; var n2 = other;
-            return 2*n1.kernelEnd - n1.supportEnd -  n2.supportStart;
+            double a3 = n1.kernelEnd, a4 = n1.supportEnd,
+                b1 = n2.supportStart, b2 = n2.kernelStart;
+            if (a3 >= b2)
+                return 1;
+            if (a4 <= b1)
+                return 0;
+            return (a4 - b1)/(b2 - b1 + a4 - a3);
             // Need test.
         }
     }

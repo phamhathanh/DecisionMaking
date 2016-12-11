@@ -45,7 +45,7 @@ namespace DecisionMaking
                     for (int k = 0; k < 3; k++)
                     {
                         var value = dilemma.GetCredibilityOfPreference(alternatives[j], alternatives[k], criteria[i]);
-                        Console.Write($"{value:F5}\t");
+                        Console.Write($"{value:F2}\t");
                     }
                     Console.WriteLine();
                 }
