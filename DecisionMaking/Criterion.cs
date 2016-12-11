@@ -17,5 +17,8 @@ namespace DecisionMaking
             this.values = values;
             Weight = weight;
         }
+
+        public TrapezoidalFuzzyNumber GetValueOf(string label)
+            => values[label];
     }
 }

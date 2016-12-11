@@ -5,9 +5,15 @@ namespace DecisionMaking
 {
     public class TrapezoidalFuzzyNumber : FuzzySet<double>
     {
+        private readonly double supportStart, kernelStart, kernelEnd, supportEnd;
+
         public TrapezoidalFuzzyNumber(double supportStart, double kernelStart, double kernelEnd, double supportEnd)
             : base(CreateMembershipFunction(supportStart, kernelStart, kernelEnd, supportEnd))
         {
+            this.supportStart = supportStart;
+            this.kernelStart = kernelStart;
+            this.kernelEnd = kernelEnd;
+            this.supportEnd = supportEnd;
         }
 
         private static Func<double, double> CreateMembershipFunction(double supportStart, double kernelStart,
@@ -30,6 +36,13 @@ namespace DecisionMaking
                 Debug.Assert(x > kernelEnd && x < supportEnd);
                 return 1 - (x - kernelEnd) / (supportEnd - kernelEnd);
             };
+        }
+
+        public double GetCredibilityOfPreferenceOver(TrapezoidalFuzzyNumber other)
+        {
+            var n1 = this; var n2 = other;
+            return 2*n1.kernelEnd - n1.supportEnd -  n2.supportStart;
+            // Need test.
         }
     }
 }

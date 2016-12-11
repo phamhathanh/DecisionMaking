@@ -14,11 +14,13 @@ namespace DecisionMaking
             this.preferenceThreshold = preferenceThreshold;
         }
 
-        public static double CredibilityOfPreference(SymmetricalTrapezoidalFuzzyNumber number1, SymmetricalTrapezoidalFuzzyNumber number2)
+        public double GetCredibilityOfPreference(SymmetricalTrapezoidalFuzzyNumber other)
         {
-            var averagePreferenceThreshold = (number1.preferenceThreshold + number2.preferenceThreshold) / 2;
-            var averageIndifferenceThreshold = (number1.indifferenceThreshold + number2.indifferenceThreshold) / 2;
-            var difference = number2.center - number1.center;
+            var n1 = this; var n2 = other;
+
+            var averagePreferenceThreshold = (n1.preferenceThreshold + n2.preferenceThreshold) / 2;
+            var averageIndifferenceThreshold = (n1.indifferenceThreshold + n2.indifferenceThreshold) / 2;
+            var difference = n2.center - n1.center;
             var numerator = averagePreferenceThreshold - Min(difference, averagePreferenceThreshold);
             var denominator = averagePreferenceThreshold - Min(difference, averageIndifferenceThreshold);
             return numerator / denominator;
