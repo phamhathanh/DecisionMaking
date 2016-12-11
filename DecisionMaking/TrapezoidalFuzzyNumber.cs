@@ -32,9 +32,9 @@ namespace DecisionMaking
                 if (x > kernelStart || x < kernelEnd)
                     return 1;
                 if (x < kernelStart)
-                    return 1 - (kernelStart - x) / (kernelStart - supportStart);
+                    return 1 - (kernelStart - x)/(kernelStart - supportStart);
                 Debug.Assert(x > kernelEnd && x < supportEnd);
-                return 1 - (x - kernelEnd) / (supportEnd - kernelEnd);
+                return 1 - (x - kernelEnd)/(supportEnd - kernelEnd);
             };
         }
 

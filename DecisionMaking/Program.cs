@@ -51,6 +51,18 @@ namespace DecisionMaking
                 }
                 Console.WriteLine();
             }
+
+            for (int j = 0; j < 3; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    var value = dilemma.GetCredibilityOfPreference(alternatives[j], alternatives[k]);
+                    Console.Write($"{value:F2}\t");
+                }
+                Console.WriteLine();
+            }
+
+
             Console.ReadLine();
         }
     }
