@@ -38,26 +38,12 @@ namespace DecisionMaking
 
             var dilemma = new Dilemma(evaluation);
 
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    for (int k = 0; k < 3; k++)
-                    {
-                        var value = dilemma.GetCredibilityOfPreference(alternatives[j], alternatives[k], criteria[i]);
-                        Console.Write($"{value:F2}\t");
-                    }
-                    Console.WriteLine();
-                }
-                Console.WriteLine();
-            }
-
             for (int j = 0; j < 3; j++)
             {
                 for (int k = 0; k < 3; k++)
                 {
-                    var value = dilemma.GetCredibilityOfPreference(alternatives[j], alternatives[k]);
-                    Console.Write($"{value:F2}\t");
+                    var value = dilemma.CredibilityOfPreference.GetRelation(alternatives[j], alternatives[k]);
+                    Console.Write($"{value:F3}\t");
                 }
                 Console.WriteLine();
             }

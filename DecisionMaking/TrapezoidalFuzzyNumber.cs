@@ -48,7 +48,6 @@ namespace DecisionMaking
             if (a4 <= b1)
                 return 0;
             return (a4 - b1)/(b2 - b1 + a4 - a3);
-            // Need test.
         }
     }
 }

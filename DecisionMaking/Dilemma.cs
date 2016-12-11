@@ -8,8 +8,10 @@ namespace DecisionMaking
     public class Dilemma
     {
         private readonly Dictionary<string, Dictionary<Criterion, string>> evaluation;
-        private readonly ICollection<string> alternatives;
-        private readonly ICollection<Criterion> criteria;
+        private readonly string[] alternatives;
+        private readonly Criterion[] criteria;
+
+        public FuzzyBinaryRelation<string> CredibilityOfPreference { get; }
 
         public Dilemma(Dictionary<string, Dictionary<Criterion, string>> evaluation)
         {
@@ -17,13 +19,23 @@ namespace DecisionMaking
             // Shallow.
             // TODO: Validation.
 
-            alternatives = evaluation.Keys;
+            alternatives = evaluation.Keys.ToArray();
 
             // Hack-ish.
-            criteria = evaluation.First().Value.Keys;
+            criteria = evaluation.First().Value.Keys.ToArray();
+
+            int n = alternatives.Length;
+            var credibilityOfPreference = new double[n, n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    string a1 = alternatives[i], a2 = alternatives[j];
+                    credibilityOfPreference[i, j] = criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(a1, a2, c)));
+                }
+            CredibilityOfPreference = new FuzzyBinaryRelation<string>(new HashSet<string>(alternatives), credibilityOfPreference);
         }
 
-        public double GetCredibilityOfPreference(string alternative1, string alternative2, Criterion criterion)
+        private double GetCredibilityOfPreference(string alternative1, string alternative2, Criterion criterion)
         {
             bool argsAreValid = alternatives.Contains(alternative1) && alternatives.Contains(alternative2);
             if (!argsAreValid)
@@ -37,9 +49,5 @@ namespace DecisionMaking
 
             return fuzzyValue1.GetCredibilityOfPreferenceOver(fuzzyValue2);
         }
-
-        // Rule: All weighted criteria.
-        public double GetCredibilityOfPreference(string alternative1, string alternative2)
-            => criteria.Min(criterion => Max(1 - criterion.Weight, GetCredibilityOfPreference(alternative1, alternative2, criterion)));
     }
 }
