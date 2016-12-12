@@ -25,15 +25,24 @@ namespace DecisionMaking
             criteria = evaluation.First().Value.Keys.ToArray();
 
             int n = alternatives.Length;
-            var credibilityOfPreference = new double[n, n];
+            var outrankingValues = new double[n, n];
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
                 {
                     string a1 = alternatives[i], a2 = alternatives[j];
-                    credibilityOfPreference[i, j] = criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(a1, a2, c)));
+                    outrankingValues[i, j] = criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(a1, a2, c)));
                 }
-            CredibilityOfPreference = new FuzzyBinaryRelation<string>(new HashSet<string>(alternatives), credibilityOfPreference);
+
+            var alternativesSet = new HashSet<string>(alternatives);
+            Func<int, int, double> outrankingRelation = (i, j) => criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(alternatives[i], alternatives[j], c)));
+            CredibilityOfPreference = new FuzzyBinaryRelation<string>(alternativesSet, GetProximityRelation);
         }
+
+        private double GetProximityRelation(int index1, int index2)
+            => Min(GetOutranking(index1, index2), GetOutranking(index2, index1));
+
+        private double GetOutranking(int index1, int index2)
+            => criteria.Min(criterion => Max(1 - criterion.Weight, GetCredibilityOfPreference(alternatives[index1], alternatives[index2], criterion)));
 
         private double GetCredibilityOfPreference(string alternative1, string alternative2, Criterion criterion)
         {

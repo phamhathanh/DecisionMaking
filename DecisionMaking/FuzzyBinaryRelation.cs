@@ -21,6 +21,23 @@ namespace DecisionMaking
             this.values = (double[,])values.Clone();
         }
 
+        public FuzzyBinaryRelation(ISet<T> set, Func<int, int, double> values)
+        {
+            this.indices = new Dictionary<T, int>(set.Count);
+            int index = 0;
+            foreach (var item in set)
+            {
+                indices.Add(item, index);
+                index++;
+            }
+
+            int n = set.Count;
+            this.values = new double[n, n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    this.values[i, j] = values(i, j);
+        }
+
         public double GetRelation(T item1, T item2)
         {
             int index1, index2;
@@ -36,5 +53,9 @@ namespace DecisionMaking
 
             return values[index1, index2];
         }
+
+        public FuzzyBinaryRelation<T> Inverse()
+            => new FuzzyBinaryRelation<T>(new HashSet<T>(indices.Keys), (i, j) => values[j, i]);
+            // Cachable.
     }
 }
