@@ -7,11 +7,13 @@ namespace DecisionMaking
 {
     public class Dilemma
     {
+        private delegate double FuzzyRelation(string alternative1, string alternative2);
+
         private readonly Dictionary<string, Dictionary<Criterion, string>> evaluation;
         private readonly string[] alternatives;
         private readonly Criterion[] criteria;
 
-        public FuzzyBinaryRelation<string> CredibilityOfPreference { get; }
+        private readonly Dictionary<string, double> nonDominationDegree, nonDominanceDegree;
 
         public Dilemma(Dictionary<string, Dictionary<Criterion, string>> evaluation)
         {
@@ -24,33 +26,29 @@ namespace DecisionMaking
             // Hack-ish.
             criteria = evaluation.First().Value.Keys.ToArray();
 
-            int n = alternatives.Length;
-            var ultrametric = new double[n][];
-            for (int i = 0; i < n; i++)
-            {
-                ultrametric[i] = new double[i + 1];
-                for (int j = 0; j < i + 1; j++)
-                    ultrametric[i][j] = 1 - GetProximityRelation(i, j);
-            }
-
             //var alternativesSet = new HashSet<string>(alternatives);
             //var proximityRelation = new FuzzyBinaryRelation<string>(alternativesSet, GetProximityRelation);
 
-            var graph = new WeightedUndirectedGraph(n, ultrametric);
-            var similarity = graph.GetShortestSpanningTree();
+            int n = alternatives.Length;
+            var vertices = Enumerable.Range(0, n);
+            var alternativesSet = new HashSet<string>(alternatives);
+
+            FuzzyRelation outranking = (a1, a2) => criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(a1, a2, c))),
+                strictPreference = (a1, a2) => Max(outranking(a1, a2) - outranking(a2, a1), 0);
+
+            this.nonDominationDegree = new Dictionary<string, double>(n);
+            this.nonDominanceDegree = new Dictionary<string, double>(n);
+            foreach (var alternative in alternatives)
+            {
+                nonDominationDegree.Add(alternative, alternatives.Min(other => 1 - strictPreference(other, alternative)));
+                nonDominanceDegree.Add(alternative, 1 - alternatives.Max(other => strictPreference(alternative, other)));
+            }
         }
-
-        private double GetProximityRelation(int index1, int index2)
-            => Min(GetOutranking(index1, index2), GetOutranking(index2, index1));
-
-        private double GetOutranking(int index1, int index2)
-            => criteria.Min(criterion => Max(1 - criterion.Weight, GetCredibilityOfPreference(alternatives[index1], alternatives[index2], criterion)));
 
         private double GetCredibilityOfPreference(string alternative1, string alternative2, Criterion criterion)
         {
-            bool argsAreValid = alternatives.Contains(alternative1) && alternatives.Contains(alternative2);
-            if (!argsAreValid)
-                throw new ArgumentException("Invalid alternative name.");
+            ValidateAlternative(alternative1);
+            ValidateAlternative(alternative2);
 
             var label1 = evaluation[alternative1][criterion];
             var fuzzyValue1 = criterion.GetValueOf(label1);
@@ -59,6 +57,24 @@ namespace DecisionMaking
             var fuzzyValue2 = criterion.GetValueOf(label2);
 
             return fuzzyValue1.GetCredibilityOfPreferenceOver(fuzzyValue2);
+        }
+
+        private void ValidateAlternative(string alternative)
+        {
+            if (!alternatives.Contains(alternative))
+                throw new ArgumentException("Invalid alternative name.");
+        }
+
+        public double GetNonDominationDegree(string alternative)
+        {
+            ValidateAlternative(alternative);
+            return nonDominationDegree[alternative];
+        }
+
+        public double GetNonDominanceDegree(string alternative)
+        {
+            ValidateAlternative(alternative);
+            return nonDominanceDegree[alternative];
         }
     }
 }

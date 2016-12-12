@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DecisionMaking
 {
-    public class FuzzyBinaryRelation<T>
+    public class FuzzyRelation<T>
     {
         private readonly Dictionary<T, int> indices;
         private readonly double[,] values;
 
-        public FuzzyBinaryRelation(ISet<T> set, double[,] values)
+        public FuzzyRelation(ISet<T> set, double[,] values)
         {
             this.indices = new Dictionary<T, int>(set.Count);
             int index = 0;
@@ -21,21 +22,34 @@ namespace DecisionMaking
             this.values = (double[,])values.Clone();
         }
 
-        public FuzzyBinaryRelation(ISet<T> set, Func<int, int, double> values)
+        public FuzzyRelation(ISet<T> set, Func<T, T, double> values)
         {
-            this.indices = new Dictionary<T, int>(set.Count);
-            int index = 0;
+            int n = set.Count;
+            this.indices = new Dictionary<T, int>(n);
+            this.values = new double[n, n];
+            int i = 0;
             foreach (var item in set)
             {
-                indices.Add(item, index);
-                index++;
+                indices.Add(item, i);
+                int j = 0;
+                foreach (var otherItem in set)
+                {
+                    this.values[i, j] = values(item, otherItem);
+                    j++;
+                }
+                i++;
             }
+        }
 
+        public FuzzyRelation(ISet<T> set, WeightedUndirectedGraph graph)
+        // Quasiorder only.
+        // Should be symmetric.
+        {
             int n = set.Count;
             this.values = new double[n, n];
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
-                    this.values[i, j] = values(i, j);
+                    this.values[i, j] = graph.GetWeight(new Edge(i, j));
         }
 
         public double GetRelation(T item1, T item2)
@@ -53,9 +67,5 @@ namespace DecisionMaking
 
             return values[index1, index2];
         }
-
-        public FuzzyBinaryRelation<T> Inverse()
-            => new FuzzyBinaryRelation<T>(new HashSet<T>(indices.Keys), (i, j) => values[j, i]);
-            // Cachable.
     }
 }

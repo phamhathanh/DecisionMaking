@@ -9,6 +9,8 @@ namespace DecisionMaking
         private readonly int vertexCount;
         private readonly Dictionary<Edge, double> weightByEdge;
 
+        public ICollection<Edge> Edges => weightByEdge.Keys;
+
         public WeightedUndirectedGraph(int vertexCount, double[][] weights)
             // Complete case.
             // TODO: Derive instead.
@@ -40,34 +42,15 @@ namespace DecisionMaking
         }
 
         public WeightedUndirectedGraph(int vertexCount, Dictionary<Edge, double> weights)
-        // Args are not really suitable.
+            // Args are not really suitable.
         {
             this.vertexCount = vertexCount;
             this.weightByEdge = weights;
             // Shallow.
         }
 
-        public struct Edge
-        {
-            public readonly int source, destination;
-            public Edge(int source, int destination)
-            {
-                this.source = source;
-                this.destination = destination;
-            }
-
-            public static bool operator ==(Edge edge1, Edge edge2)
-                => edge1.source == edge2.source && edge1.destination == edge2.destination;
-
-            public static bool operator !=(Edge edge1, Edge edge2)
-                => !(edge1 == edge2);
-
-            public override bool Equals(object other)
-                => other is Edge && (Edge)other == this;
-
-            public override int GetHashCode()
-                => source.GetHashCode() + 5 * destination.GetHashCode();
-        }
+        public double GetWeight(Edge edge)
+            => weightByEdge[edge];
 
         public WeightedUndirectedGraph GetShortestSpanningTree()
         {

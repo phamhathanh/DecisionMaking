@@ -38,16 +38,10 @@ namespace DecisionMaking
 
             var dilemma = new Dilemma(evaluation);
 
-            for (int j = 0; j < 3; j++)
+            foreach (var alternative in alternatives)
             {
-                for (int k = 0; k < 3; k++)
-                {
-                    var value = dilemma.CredibilityOfPreference.GetRelation(alternatives[j], alternatives[k]);
-                    Console.Write($"{value:F3}\t");
-                }
-                Console.WriteLine();
+                Console.WriteLine($"{alternative}\t{dilemma.GetNonDominationDegree(alternative)}\t{dilemma.GetNonDominanceDegree(alternative)}");
             }
-
 
             Console.ReadLine();
         }
