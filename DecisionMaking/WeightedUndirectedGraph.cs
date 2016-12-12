@@ -9,8 +9,22 @@ namespace DecisionMaking
         private readonly int vertexCount;
         private readonly Dictionary<Edge, double> weightByEdge;
 
+        public WeightedUndirectedGraph(int vertexCount, double[][] weights)
+            // Complete case.
+            // TODO: Derive instead.
+        {
+            this.vertexCount = vertexCount;
+
+            this.weightByEdge = new Dictionary<Edge, double>(vertexCount*(vertexCount + 1)/2);
+
+            // Need sanity check here.
+            for (int i = 0; i < vertexCount; i++)
+                for (int j = 0; j < i + 1; j++)
+                    weightByEdge.Add(new Edge(i, j), weights[i][j]);
+        }
+
         public WeightedUndirectedGraph(int vertexCount, Dictionary<int, Dictionary<int, double>> weights)
-        // Args are not really suitable.
+            // Args are not really suitable.
         {
             this.vertexCount = vertexCount;
 
@@ -55,7 +69,7 @@ namespace DecisionMaking
                 => source.GetHashCode() + 5 * destination.GetHashCode();
         }
 
-        private WeightedUndirectedGraph GetShortestSpanningTree()
+        public WeightedUndirectedGraph GetShortestSpanningTree()
         {
             var vertices = Enumerable.Range(0, vertexCount);
             var trees = vertices.Select(vertex => new HashSet<int>(new[] { vertex }))

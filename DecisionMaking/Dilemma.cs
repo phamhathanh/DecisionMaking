@@ -25,17 +25,19 @@ namespace DecisionMaking
             criteria = evaluation.First().Value.Keys.ToArray();
 
             int n = alternatives.Length;
-            var outrankingValues = new double[n, n];
+            var ultrametric = new double[n][];
             for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                {
-                    string a1 = alternatives[i], a2 = alternatives[j];
-                    outrankingValues[i, j] = criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(a1, a2, c)));
-                }
+            {
+                ultrametric[i] = new double[i + 1];
+                for (int j = 0; j < i + 1; j++)
+                    ultrametric[i][j] = 1 - GetProximityRelation(i, j);
+            }
 
-            var alternativesSet = new HashSet<string>(alternatives);
-            Func<int, int, double> outrankingRelation = (i, j) => criteria.Min(c => Max(1 - c.Weight, GetCredibilityOfPreference(alternatives[i], alternatives[j], c)));
-            CredibilityOfPreference = new FuzzyBinaryRelation<string>(alternativesSet, GetProximityRelation);
+            //var alternativesSet = new HashSet<string>(alternatives);
+            //var proximityRelation = new FuzzyBinaryRelation<string>(alternativesSet, GetProximityRelation);
+
+            var graph = new WeightedUndirectedGraph(n, ultrametric);
+            var similarity = graph.GetShortestSpanningTree();
         }
 
         private double GetProximityRelation(int index1, int index2)
