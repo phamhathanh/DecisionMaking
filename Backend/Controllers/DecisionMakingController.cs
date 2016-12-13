@@ -1,9 +1,8 @@
-﻿using System;
+﻿using DecisionMaking;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using DecisionMaking;
 
 namespace Backend.Controllers
 {
@@ -50,7 +49,7 @@ namespace Backend.Controllers
             var quality = new Criterion(CreateDictionary(qualityLabels, fuzzyValues), 0.25);
             var criteria = new[] { price, distance, funness, quality };
 
-            var places = new[] { "Sapa", "Tam Dao", "Ba Vi" };
+            var places = new[] { "Sa Pa", "Tam Dao", "Ba Vi", "Da Lat" };
 
             var evaluation = new Dictionary<string, Dictionary<Criterion, string>>();
             var lowa = new LOWA(5);
