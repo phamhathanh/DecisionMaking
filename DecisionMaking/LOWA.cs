@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
 
-namespace ConsoleMock
+namespace DecisionMaking
 {
     public class LOWA
     {
@@ -18,9 +18,10 @@ namespace ConsoleMock
 
         public int Average(ICollection<int> labels)
         {
-            if (labels.Count < 2)
-                throw new ArgumentException("Insufficient labels.");
-
+            if (labels.Count == 0)
+                throw new ArgumentException("Argument is empty.");
+            if (labels.Count == 1)
+                return labels.First();
             if (labels.Count == 2)
                 return Average(labels.First(), labels.Last());
             return Average(labels.First(), Average(labels.Skip(1).ToList()));
