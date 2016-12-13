@@ -8,11 +8,21 @@ namespace Backend.Controllers
 {
     public class DecisionMakingController : Controller
     {
-        [HttpGet]
-        [Route("api/algorithm")]
-        public IEnumerable<string> Get()
+        public class Place
         {
-            return new string[] { "value1", "value2" };
+            public string name, price, distance, funness, quality;
+            // Hacky, cuz not sure if it's needed for json.
+        }
+        public class Vote
+        {
+            public Place[] places;
+        }
+
+        [HttpPost]
+        [Route("api/algorithm")]
+        public IEnumerable<Place> RunAlgorithm([FromBody] Vote[] votes)
+        {
+            return from vote in votes from place in vote.places select place;
         }
     }
 }
